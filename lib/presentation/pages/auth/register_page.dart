@@ -38,6 +38,23 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  Future<void> _handleRegister() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await _authController.register(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+        if (mounted) {
+          context.go(AppRoutes.home);
+        }
+      } catch (e) {
+        print('Register error: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 8),
               const Text(
                 'Start organizing your thoughts today',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.textSecondary,
-                ),
+                style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
               ),
               const SizedBox(height: 40),
               Form(
@@ -109,11 +123,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined),
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                       validator: (v) {
@@ -123,53 +140,51 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    Obx(() => _authController.errorMessage.value.isNotEmpty
-                        ? Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppTheme.errorColor.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              _authController.errorMessage.value,
-                              style: const TextStyle(
-                                color: AppTheme.errorColor,
-                                fontSize: 13,
+                    Obx(
+                      () => _authController.errorMessage.value.isNotEmpty
+                          ? Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppTheme.errorColor.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                          )
-                        : const SizedBox()),
+                              child: Text(
+                                _authController.errorMessage.value,
+                                style: const TextStyle(
+                                  color: AppTheme.errorColor,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                    ),
                     const SizedBox(height: 24),
-                    Obx(() => ElevatedButton(
-                          onPressed: _authController.isLoading.value
-                              ? null
-                              : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _authController.register(
-                                      name: _nameController.text.trim(),
-                                      email: _emailController.text.trim(),
-                                      password: _passwordController.text.trim(),
-                                    );
-                                  }
-                                },
-                          child: _authController.isLoading.value
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                                  ),
-                                )
-                              : const Text(
-                                  'Create Account',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                    Obx(
+                      () => ElevatedButton(
+                        onPressed: _authController.isLoading.value
+                            ? null
+                            : _handleRegister,
+                        child: _authController.isLoading.value
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
                                   ),
                                 ),
-                        )),
+                              )
+                            : const Text(
+                                'Create Account',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                      ),
+                    ),
                   ],
                 ),
               ),

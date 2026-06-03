@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
-import '../../core/routes/app_router.dart';
-import '../../domain/usecases/auth/login_usecase.dart';
-import '../../domain/usecases/auth/register_usecase.dart';
-import '../../domain/usecases/auth/logout_usecase.dart';
+import '../../../domain/usecases/auth/login_usecase.dart';
+import '../../../domain/usecases/auth/register_usecase.dart';
+import '../../../domain/usecases/auth/logout_usecase.dart';
 
 class AuthController extends GetxController {
   final LoginUseCase _loginUseCase;
@@ -14,9 +12,9 @@ class AuthController extends GetxController {
     required LoginUseCase loginUseCase,
     required RegisterUseCase registerUseCase,
     required LogoutUseCase logoutUseCase,
-  })  : _loginUseCase = loginUseCase,
-        _registerUseCase = registerUseCase,
-        _logoutUseCase = logoutUseCase;
+  }) : _loginUseCase = loginUseCase,
+       _registerUseCase = registerUseCase,
+       _logoutUseCase = logoutUseCase;
 
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -26,9 +24,9 @@ class AuthController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
       await _loginUseCase.call(email: email, password: password);
-      Get.context!.go(AppRoutes.home);
     } catch (e) {
       errorMessage.value = _parseError(e);
+      rethrow;
     } finally {
       isLoading.value = false;
     }
@@ -43,9 +41,9 @@ class AuthController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
       await _registerUseCase.call(name: name, email: email, password: password);
-      Get.context!.go(AppRoutes.home);
     } catch (e) {
       errorMessage.value = _parseError(e);
+      rethrow;
     } finally {
       isLoading.value = false;
     }
@@ -53,18 +51,26 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     try {
+      isLoading.value = true;
+      errorMessage.value = '';
       await _logoutUseCase.call();
-      Get.context!.go(AppRoutes.login);
     } catch (e) {
       errorMessage.value = _parseError(e);
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 
   String _parseError(dynamic e) {
     final msg = e.toString().toLowerCase();
-    if (msg.contains('invalid login credentials')) return 'Invalid email or password.';
-    if (msg.contains('email already registered')) return 'Email already in use.';
+    if (msg.contains('invalid login credentials'))
+      return 'Invalid email or password.';
+    if (msg.contains('email already registered'))
+      return 'Email already in use.';
     if (msg.contains('network')) return 'Network error. Please try again.';
+    if (msg.contains('password'))
+      return 'Password must be at least 6 characters.';
     return 'Something went wrong. Please try again.';
   }
 }

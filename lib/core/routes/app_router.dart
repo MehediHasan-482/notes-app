@@ -22,27 +22,33 @@ class AppRouter {
       final prefs = await SharedPreferences.getInstance();
       final splashShown = prefs.getBool(AppConstants.splashShownKey) ?? false;
       final session = Supabase.instance.client.auth.currentSession;
+      final currentLocation = state.matchedLocation;
 
-      // If splash not shown, go to splash
-      if (!splashShown && state.matchedLocation != AppRoutes.splash) {
-        return AppRoutes.splash;
+      // Splash not shown yet
+      if (!splashShown) {
+        if (currentLocation != AppRoutes.splash) {
+          return AppRoutes.splash;
+        }
+        return null;
       }
 
-      // If splash shown and user is authenticated, go to home
-      if (splashShown && session != null) {
-        if (state.matchedLocation != AppRoutes.login ||
-            state.matchedLocation != AppRoutes.register ||
-            state.matchedLocation != AppRoutes.splash) {
+      // User is logged in - go to home
+      if (session != null) {
+        if (currentLocation == AppRoutes.login ||
+            currentLocation == AppRoutes.register ||
+            currentLocation == AppRoutes.splash) {
           return AppRoutes.home;
         }
+        return null;
       }
 
-      // If splash shown and user is not authenticated
-      if (splashShown && session == null) {
-        if (state.matchedLocation == AppRoutes.home ||
-            state.matchedLocation == AppRoutes.splash) {
+      // User is not logged in - go to login
+      if (session == null && splashShown) {
+        if (currentLocation != AppRoutes.login &&
+            currentLocation != AppRoutes.register) {
           return AppRoutes.login;
         }
+        return null;
       }
 
       return null;
