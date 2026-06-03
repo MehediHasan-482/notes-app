@@ -28,14 +28,12 @@ class _SplashPageState extends State<SplashPage>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-    _scaleAnimation = Tween<double>(
-      begin: 0.7,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+    );
     _controller.forward();
     _navigate();
   }
@@ -46,7 +44,7 @@ class _SplashPageState extends State<SplashPage>
     await prefs.setBool(AppConstants.splashShownKey, true);
     if (!mounted) return;
     final session = Supabase.instance.client.auth.currentSession;
-    context.go(session != null ? AppRoutes.home : AppRoutes.home);
+    context.go(session != null ? AppRoutes.home : AppRoutes.login);
   }
 
   @override
