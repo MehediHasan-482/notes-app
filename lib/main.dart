@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notesapp/core/routes/app_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/app_constants.dart';
 
@@ -18,14 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'NoteNest',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text('Supabase Connected!'),
-        ),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      routerConfig: AppRouter.router,
     );
   }
 }
