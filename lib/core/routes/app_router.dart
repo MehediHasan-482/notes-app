@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:notesapp/presentation/pages/auth/login_page.dart';
 import 'package:notesapp/presentation/pages/auth/register_page.dart';
 import 'package:notesapp/presentation/pages/home/home_page.dart';
+import 'package:notesapp/presentation/pages/notes/add_note_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../presentation/pages/splash/splash_page.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String note = '/add-note';
 }
 
 class AppRouter {
@@ -69,6 +71,10 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.home,
         builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.note,
+        builder: (context, state) => const AddNotePage(),
       ),
     ],
     errorBuilder: (context, state) =>

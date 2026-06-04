@@ -5,22 +5,22 @@ class SupabaseDataSource {
 
   Future<void> login({required String email, required String password}) async {
     try {
-      print('🔐 Login attempt for: $email');
+      print('Login attempt for: $email');
       final response = await _client.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      print('✅ Login response received');
+      print('Login response received');
       print('Session: ${response.session != null}');
       print('User: ${response.user?.email}');
 
       if (response.session == null) {
-        print('❌ Session is null');
+        print('Session is null');
         throw Exception('Login failed');
       }
-      print('✅ Login successful');
+      print('Login successful');
     } catch (e) {
-      print('❌ Login error: $e');
+      print('Login error: $e');
       rethrow;
     }
   }
@@ -31,9 +31,8 @@ class SupabaseDataSource {
     required String password,
   }) async {
     try {
-      print('📝 Register attempt for: $email');
+      print('Register attempt for: $email');
 
-      // Step 1: Sign up
       final signUpResponse = await _client.auth.signUp(
         email: email,
         password: password,
@@ -46,14 +45,13 @@ class SupabaseDataSource {
       print('Session: ${signUpResponse.session != null}');
 
       if (signUpResponse.user == null) {
-        print('❌ User creation failed');
+        print('User creation failed');
         throw Exception('Registration failed');
       }
 
-      print('✅ User created successfully');
+      print('User created successfully');
 
-      // Step 2: Auto login
-      print('🔐 Auto logging in...');
+      print('Auto logging in...');
       final signInResponse = await _client.auth.signInWithPassword(
         email: email,
         password: password,
@@ -63,13 +61,13 @@ class SupabaseDataSource {
       print('Session: ${signInResponse.session != null}');
 
       if (signInResponse.session == null) {
-        print('❌ Auto-login failed - session null');
+        print('Auto-login failed - session null');
         throw Exception('Auto-login failed');
       }
 
-      print('✅ Registration and auto-login successful!');
+      print('Registration and auto-login successful!');
     } catch (e) {
-      print('❌ Registration error: $e');
+      print('Registration error: $e');
       print('Error type: ${e.runtimeType}');
       rethrow;
     }
@@ -77,12 +75,39 @@ class SupabaseDataSource {
 
   Future<void> logout() async {
     try {
-      print('👋 Logout attempt');
+      print('Logout attempt');
       await _client.auth.signOut();
-      print('✅ Logout successful');
+      print('Logout successful');
     } catch (e) {
-      print('❌ Logout error: $e');
+      print('Logout error: $e');
       rethrow;
     }
+  }
+  
+  // Notes methods
+  Future<List<Map<String, dynamic>>> getNotes() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw Exception('Not authenticated');
+    
+    return await _client
+        .from('notes')
+        .select()
+        .eq('user_id', userId)
+        .order('created_at', ascending: false);
+  }
+  
+  Future<void> addNote(String title, String description) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw Exception('Not authenticated');
+    
+    await _client.from('notes').insert({
+      'user_id': userId,
+      'title': title,
+      'description': description,
+    });
+  }
+  
+  Future<void> deleteNote(String noteId) async {
+    await _client.from('notes').delete().eq('id', noteId);
   }
 }
