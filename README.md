@@ -47,11 +47,11 @@ lib/
 
 | Category | Package |
 |---|---|
-| State Management | [get ^4.6.6](https://pub.dev/packages/get) |
-| Navigation | [go_router ^13.2.0](https://pub.dev/packages/go_router) |
-| Backend / Database | [supabase_flutter ^2.3.4](https://pub.dev/packages/supabase_flutter) |
-| Local Storage | [shared_preferences ^2.2.2](https://pub.dev/packages/shared_preferences) |
-| Date Formatting | [intl ^0.19.0](https://pub.dev/packages/intl) |
+| State Management | [get ](https://pub.dev/packages/get) |
+| Navigation | [go_router ](https://pub.dev/packages/go_router) |
+| Backend / Database | [supabase_flutter ](https://pub.dev/packages/supabase_flutter) |
+| Local Storage | [shared_preferences ](https://pub.dev/packages/shared_preferences) |
+| Date Formatting | [intl ](https://pub.dev/packages/intl) |
 
 ---
 
