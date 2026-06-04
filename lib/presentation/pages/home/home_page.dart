@@ -234,9 +234,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ListTile(
               leading: const Icon(Icons.logout_rounded, color: Colors.red),
               title: const Text('Logout', style: TextStyle(color: Colors.red)),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(ctx);
-                _authController.logout();
+                await _authController.logout(
+                  context,
+                );
               },
             ),
           ],

@@ -1,6 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import '../../../domain/usecases/auth/login_usecase.dart';
 import '../../../domain/usecases/auth/register_usecase.dart';
 import '../../../domain/usecases/auth/logout_usecase.dart';
@@ -51,18 +53,22 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> logout() async {
-    try {
-      isLoading.value = true;
-      errorMessage.value = '';
-      await _logoutUseCase.call();
-    } catch (e) {
-      errorMessage.value = _parseError(e);
-      rethrow;
-    } finally {
-      isLoading.value = false;
+Future<void> logout(BuildContext context) async {
+  try {
+    isLoading.value = true;
+    errorMessage.value = '';
+    await _logoutUseCase.call();
+    
+    if (context.mounted) {
+      GoRouter.of(context).go('/login');
     }
+  } catch (e) {
+    errorMessage.value = _parseError(e);
+    rethrow;
+  } finally {
+    isLoading.value = false;
   }
+}
 
   String _parseError(dynamic e) {
     final msg = e.toString().toLowerCase();
